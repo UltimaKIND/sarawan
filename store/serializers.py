@@ -98,6 +98,16 @@ class ProductSerializer(ModelSerializer):
             "images",
         )
 
+    def create(self, validated_data):
+        """
+        генерирует slug
+        """
+        slug = slugify(validated_data["product_name"])
+        category = validated_data["category"]
+
+        validated_data["slug"] = f"{category.slug}/{slug}"
+        return Product.objects.create(**validated_data)
+
     def get_category(self, obj):
         """
         возвращает сериализованную категорию
