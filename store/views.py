@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
+from users.permissions import IsModer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from store.pagination import Pagination
@@ -14,13 +15,18 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.filter(parent=None)
     pagination_class = Pagination
-    http_method_names = ['get', 'head', 'options']
 
     def get(self, request):
             queryset = Category.objects.filter(parent=None)
             paginated_queryset = self.paginate_queryset(queryset)
             serializer = CategorySerializer(paginated_queryset, many=True)
             return self.get_paginated_response(serializer.data)
+
+    def get_permissions(self):
+            if self.action in ["create", "update", "destroy"]:
+                self.permission_classes = (IsModer, IsAuthenticated)
+
+            return super().get_permissions()
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -30,7 +36,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     pagination_class = Pagination
     queryset = Product.objects.all()
-    http_method_names = ['get', 'head', 'options']
+
+    def get_permissions(self):
+        if self.action in ["create", "update", "destroy"]:
+            self.permission_classes = (IsModer, IsAuthenticated)
+
+        return super().get_permissions()
 
 class CartAPI(APIView):
     """
