@@ -12,7 +12,10 @@ class CartService(object):
         """
         self.user = request.user
         self.cart = Cart.objects.filter(user=self.user).first()
-        self.data = json.loads(self.cart.cart_data) if self.cart.cart_data else {}
+        if self.cart.cart_data:
+            self.data = json.loads(self.cart.cart_data) if self.cart.cart_data else {}
+        else:
+            self.data = {}
 
     def __len__(self):
         """
@@ -64,7 +67,7 @@ class CartService(object):
         return (
             str(
                 sum(
-                    Decimal(item["price"]) * int(item["quantity"])
+                    float(item["price"]) * int(item["quantity"])
                     for item in self.data.values()
                 )
             )
@@ -84,7 +87,7 @@ class CartService(object):
         возвращает список всех товаров в корзине, их цену на момент добавления в корзину и количество
         """
         return (
-            (
+            [
                 {
                     product.id: {
                         "price": self.data[str(product.id)]["price"],
@@ -92,7 +95,7 @@ class CartService(object):
                     }
                 }
                 for product in Product.objects.filter(id__in=self.data.keys())
-            )
+            ]
             if self.data
             else "cart is empty"
         )

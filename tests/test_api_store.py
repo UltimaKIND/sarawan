@@ -9,7 +9,7 @@ from users.models import *
 
 class TestCategory:
     """
-    тесты эндпоинтов CRUD API Node
+    тесты эндпоинтов CRUD Category
     """
 
     @pytest.mark.django_db
