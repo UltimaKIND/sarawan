@@ -1,7 +1,8 @@
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from users.models import User
+
 from store.models import Cart
+from users.models import User
 from users.permissions import IsModer, IsOwner, IsSelfUser
 from users.serializers import OtherUserSerializer, UserSerializer
 
